@@ -1,0 +1,42 @@
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Crypto Dashboard</title>
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="bg-black flex justify-center items-center min-h-screen text-white px-5">
+    <div class="w-full max-w-md p-8 bg-gradient-to-r from-black to-cyan-300 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">Login</h1>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div>
+                    <label for="id_username" class="block text-sm font-medium mb-1">Username</label>
+                    <input type="text" name="username" id="id_username" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Enter your username" required>
+                </div>
+                <div>
+                    <label for="id_password" class="block text-sm font-medium mb-1">Password</label>
+                    <input type="password" name="password" id="id_password" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Enter your password" required>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-300">Login</button>
+        </form>
+
+        <p class="text-center mt-6 text-gray-400">
+            Don't have an account? <a href="{% url 'register' %}" class="text-blue-400 hover:text-blue-500 font-medium">Register here</a>
+        </p>
+
+        {% if form.errors %}
+            <div class="mt-4 p-4 bg-red-600 rounded-lg text-center">
+                <p class="text-sm">Invalid username or password. Please try again.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
