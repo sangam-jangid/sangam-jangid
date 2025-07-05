@@ -1,24 +1,9 @@
-# Python environment files
-.venv/
-env/
 __pycache__/
 *.py[cod]
-*.pyo
-
-# Django SQLite database
-db.sqlite3
-
-# Django static and media files (if generated during development)
+*.sqlite3
+.env
+.venv/
+node_modules/
 staticfiles/
 media/
-
-# VSCode config and system files
-.vscode/
-.DS_Store
-Thumbs.db
-
-# Pip log files
-pip-log.txt
-
-# Any other sensitive or heavy folders
-node_modules/
+db.sqlite3
