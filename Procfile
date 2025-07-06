@@ -1,1 +1,2 @@
-web: gunicorn RoyalStore.wsgi
+web: daphne RoyalStore.asgi:application
+
