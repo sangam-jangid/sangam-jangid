@@ -28,6 +28,5 @@ urlpatterns = [
     path('Contact/', views.Contact, name='Contact'),
     path('Shop/', include('Shop.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path("__reload__/", include("django_browser_reload.urls")),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
