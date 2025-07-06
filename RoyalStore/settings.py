@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'Shop',
     'tailwind',
     'THEME',
-    'django_browser_reload'
+    'django_browser_reload',
+    'channels',
 ]
 
 TAILWIND_APP_NAME = 'THEME'
@@ -86,6 +87,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 

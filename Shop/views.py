@@ -7,6 +7,7 @@ from django.contrib.auth import login
 from django.shortcuts import render
 from .models import Profile, Cart, CartItem, Product, Order, OrderItem
 from django.contrib.auth.models import User
+from .models import Message
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from decimal import Decimal
@@ -14,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
-
+from django.http import Http404
 
 # Create your views here.
 
@@ -212,3 +213,30 @@ def take_order(request, order_id):
 
     except Order.DoesNotExist:
         return JsonResponse({'error': 'Order not found'}, status=404)
+
+
+@login_required
+def chat_room(request):
+    messages = Message.objects.all()
+    context = {
+        'messages': messages,
+        'user': request.user  # <- add this
+    }
+    return render(request, 'shop/chat.html', context)
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        content = request.POST.get('message')
+        if content:
+            Message.objects.create(sender=request.user, content=content)
+    return redirect('chat_room')
+
+def delete_message(request, message_id):
+    try:
+        message = Message.objects.get(id=message_id)
+        if message.sender == request.user:
+            message.delete()
+    except Message.DoesNotExist:
+        raise Http404("Message not found.")
+    return redirect('chat_room')

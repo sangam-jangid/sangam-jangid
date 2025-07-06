@@ -1,9 +1,24 @@
+# Python
+*.pyc
 __pycache__/
-*.py[cod]
-*.sqlite3
-.env
 .venv/
-node_modules/
-staticfiles/
-media/
+.env
+
+# Django
 db.sqlite3
+/staticfiles/
+
+# VSCode
+.vscode/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+
+# Vercel
+.vercel/
+
+# Logs
+*.log

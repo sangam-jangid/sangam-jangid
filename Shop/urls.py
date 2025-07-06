@@ -20,6 +20,9 @@ urlpatterns = [
     path('admin-orders/', views.admin_orders, name='admin_orders'),
     path('orders/<str:username>/', views.user_orders, name='user_orders'),
     path('take-order/<int:order_id>/', views.take_order, name='take_order'),
+    path('chat/', views.chat_room, name='chat_room'),
+    path('send/', views.send_message, name='send_message'),
+    path('delete/<int:message_id>/', views.delete_message, name='delete_message'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
