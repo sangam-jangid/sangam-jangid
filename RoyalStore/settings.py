@@ -148,4 +148,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 SESSION_COOKIE_AGE = 86400
 
-# ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.onrender.com']
