@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-56!bb-9&q2ieo0vse0xdb$3u_7or#v5+pgd&(+4z-^e_p*&eep
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,7 +39,6 @@ INSTALLED_APPS = [
     'Shop',
     'tailwind',
     'THEME',
-    'django_browser_reload',
     'channels',
 ]
 
