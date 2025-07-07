@@ -10,6 +10,8 @@ tailwindcss.exe
 
 # Django
 db.sqlite3
+staticfiles/
+
 
 # VSCode
 .vscode/
