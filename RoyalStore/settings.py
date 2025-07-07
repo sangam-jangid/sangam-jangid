@@ -148,4 +148,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 SESSION_COOKIE_AGE = 86400
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1']
