@@ -2789,6 +2789,11 @@
     }
   }
   @media (width >= 64rem) {
+    .lg\:h-\[80vh\] {
+      height: 80vh;
+    }
+  }
+  @media (width >= 64rem) {
     .lg\:h-\[90vh\] {
       height: 90vh;
     }
