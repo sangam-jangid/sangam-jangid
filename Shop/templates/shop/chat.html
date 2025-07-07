@@ -14,7 +14,7 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-tr from-black via-purple-900 to-indigo-900 h-[100vh] flex flex-col overflow-y-hidden">
+<body class="bg-gradient-to-tr from-black via-purple-900 to-indigo-900 h-screen flex flex-col">
 
   <div class="flex-grow overflow-y-scroll p-5 space-y-3" id="chat-box">
     {% for message in messages %}
@@ -44,18 +44,16 @@
     {% endfor %}
   </div>
 
-<form method="post" action="{% url 'send_message' %}" 
-  class="p-3 bg-black/40 backdrop-blur flex items-center gap-2 border-t border-white/20 w-full relative bottom-0 left-0 right-0">
-  {% csrf_token %}
-  <input name="message" placeholder="Type your message..."
-    class="p-3 rounded-full w-full bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition placeholder-gray-500 min-w-0" />
-  <button type="submit"
-    class="px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:scale-105 transition shadow-lg">
-    Send
-  </button>
-</form>
+  <form method="post" action="{% url 'send_message' %}" class="p-4 bg-black/40 backdrop-blur flex flex-wrap gap-2 border-t border-white/20">
+    {% csrf_token %}
+    <input name="message" placeholder="Type your message..."
+  class="flex-grow min-w-0 p-3 rounded-full bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition placeholder-gray-500" />
 
-  
+    <button type="submit"
+      class="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:scale-105 transition shadow-lg">
+      Send
+    </button>
+  </form>
 
   <script>
     function scrollToBottom() {
