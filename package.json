@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/sangam-jangid/sangam-jangid#readme",
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11"

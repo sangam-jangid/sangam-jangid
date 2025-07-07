@@ -1,7 +1,8 @@
 module.exports = {
     content: [
-      './templates/**/*.{html,js}',
-      './Shop/**/*.{html,js}',
+      './templates/**/*.html',
+      './Shop/templates/**/*.html',
+      './RoyalStore/templates/**/*.html'
     ],
     theme: {
       extend: {},
