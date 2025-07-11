@@ -1,418 +1,86 @@
 {% load static %}
-{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoyalStore</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'royal4.png'%}">
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <link rel="stylesheet" href="{% static 'style.css'%}">
+  <title>Royal Chat Room</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
-<body class='body bg-[length:100%_100%] sm:bg-[length:200%_200%] md:bg-[length:500%_500%] lg:bg-[length:800%_800%] flex flex-col justify-item overflow-scroll'>
-    <nav class="bg-black p-4 sm:p-4 md:p-6 lg:p-8 flex justify-center items-center w-full fixed top-0 z-50 gap-2 sm:gap-1 md:gap-2 lg:gap-3">
-        <form id="addressForm" class="flex items-center gap-2 sm:gap-2 md:gap-3 lg:gap-4">
-          <label for="userAddress" class="text-white text-[11px] sm:text-lg md:text-xl lg:text-2xl w-24 sm:w-32 md:w-44 lg:w-52">Enter your address</label>
-          <textarea id="userAddress" rows="1" placeholder="" class="text-white text-base border-2 h-8 sm:h-8 md:h-9 lg:h-10 border-white w-24 sm:w-40 md:w-60 lg:w-80 bg-transparent p-0 sm:p-1 md:p-2 lg:p-2 text-center"></textarea>
-          <button type="submit" class="text-white border-2 border-white h-8 w-16 sm:h-5 sm:w-20 md:h-8 md:w-28 lg:h-10 lg:w-32 text-[9px] sm:text-sm md:text-base lg:text-lg hover:lg:text-xl hover:md:text-lg hover:sm:base hover:text-[10px] transition-all duration-300">Save Address</button>
-        </form>
-        <button onclick="getUserLocation()" class="h-8 w-20 sm:h-8 sm:w-20 md:h-10 md:w-32 lg:h-10 lg:w-40 text-[9px] sm:text-sm md:text-base lg:text-lg bg-gradient-to-r from-red-600 to-blue-600 text-white rounded-lg">Get My Location</button>
-        <a href="/Shop/orders/{{ request.user.username }}/" class="text-white">📝 My Orders</a>
-      </nav>
-      <div class="container_1 bg-gradient-to-r from-black to-cyan-400 flex flex-col mt-[107px] h-full overflow-hidden">
-        <div id="empty-message" class="fixed inset-0 flex-col justify-center items-center bg-black/90 text-white text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold hidden">
-          🛒 Your cart is empty.
-        </div>
-        
-        <div class="locate flex flex-col w-full text-center h-10">
-          <div id="loader" class="hidden text-[15px] sm:text-lg md:text-xl lg:text-2xl bg-gradient-to-r from-red-500 to-purple-600 w-full">⏳ Fetching your location...</div>
-          <div id="locationDisplay" class="hidden text-[15px] sm:text-lg md:text-xl lg:text-2xl bg-gradient-to-r from-blue-600 to-purple-600 w-full"></div>
-        </div>
-        <a href="{% url 'profile' user.username%}" class="w-20 sm:w-20 md:w-24 lg:w-60 flex justify-center absolute top-24 sm:top-24 md:top-24 lg:top-32">
-          <img src="{% static 'male-user.png'%}" alt="" class="profile h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 rounded-full">
-          </a>
-        <div class="message text-2xl sm:text-3xl md:text-3xl lg:text-4xl text-black font-serif underline decoration-solid text-center sm:mt-0 md:mt-2 lg:mt-10 mt-0">
-        <span>Here are your cart items</span>
-      </div>
-        <div class="smallContainer mt-10 flex flex-col justify-center place-items-center">
-          <div class="list flex flex-col w-5/6 sm:w-4/5 md:w-3/4 lg:w-2/3">
-            <span id='items' class='rounded-2xl px-2  py-4 flex flex-col-reverse bg-gradient-to-r from-purple-600 to-black'>
+<body class="h-screen w-screen bg-black flex items-center justify-center">
 
-            </span>
-          </div>
-          <div class="total bg-black/30 backdrop-blur-2xl flex flex-col gap-3 px-5 mt-10 mb-10 h-[30vh] w-[60vw] sm:h-[30vh] sm:w-[70vw] md:h-[21vh] md:w-[50vw] lg:h-[45vh] lg:w-[40vw] rounded-2xl justify-center">
-            <span class="details text-xs sm:text-sm md:text-base lg:text-2xl text-center font-bold">Payment Details</span>
+  <!-- Full black container -->
+  <div class="h-full w-full bg-black flex items-center justify-center">
 
-            <div class="mrp flex justify-between">
-              <p class="text-xs sm:text-sm md:text-base lg:text-lg text-white">MRP Total</p>
-              <p id="mrp" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-white"></p>
-            </div>
-            <hr class="hr w-52 sm:w-base md:w-[360px] lg:w-xl border-0.1 border-gray-500">
-            <div class="discount flex justify-between">
-              <p class="text-xs sm:text-sm md:text-base lg:text-lg text-white">Discount</p>
-              <p class="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-white">₹0</p>
-            </div>
-            <hr class="hr w-52 sm:w-base md:w-[360px] lg:w-xl border-0.1 border-gray-500">
-            <div class="delfee flex justify-between">
-              <p class="text-xs sm:text-sm md:text-base lg:text-lg text-white">Delivery Fee</p>
-              <p id='delfee' class="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-white">
-                <label for="items" class="label text-[9px] sm:text-sm md:text-sm lg:text-base">Wanna Delivery?</label>
-                <input name="items" type="checkbox" id="items" class="mr-0.5 sm:mr-1 md:mr-2 lg:mr-3 h-3 w-3">
-                <span id="feeLabel" class="text-xs sm:text-sm md:text-base lg:text-lg">₹5.00</span>
-              </p>
-            </div>
-            <hr class="hr w-52 sm:w-base md:w-[360px] lg:w-xl border-0.5 border-gray-500">
-            <div class="total flex justify-between">
-              <p class="text-sm sm:text-base md:text-lg lg:text-xl text-white">Total</p>
-              <p id="total" class="cart-total font-bold text-sm sm:text-base md:text-lg lg:text-xl text-white"></p>
-            </div>
-            <div class="flex justify-center">
-              {% if cart %}
-               <button onclick="placeOrder()"
-                       class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded py-1 px-2 lg:py-2 lg:px-4 sm:text-sm md:text-base lg:text-lg mb-1">
-                      🛒 Place Order Now
-               </button>
+    <!-- Centered chat box -->
+    <div class="w-full max-w-xl h-[90vh] bg-black border border-white/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+
+      <!-- Messages scroll area -->
+      <div id="chat-box" class="flex-grow overflow-y-auto p-4 space-y-3">
+
+        {% for message in messages %}
+          <div class="fade-in">
+            <div class="p-4 rounded-2xl backdrop-blur-md transition
+            {% if message.sender == user %}
+              ml-auto bg-gradient-to-r from-purple-600 to-pink-500 text-white
+            {% else %}
+              bg-white/10 text-white
+            {% endif %} hover:scale-[1.015] duration-300 max-w-[75%]">
+
+              <div class="flex justify-between items-center mb-1">
+                <p class="text-sm font-semibold">{{ message.sender.username }}</p>
+                <p class="text-xs text-gray-300">{{ message.timestamp|date:"H:i" }}</p>
+              </div>
+
+              <p class="text-lg leading-relaxed break-words">{{ message.content }}</p>
+
+              {% if user.is_authenticated and message.sender == user or user.is_superuser %}
+                <form method="post" action="{% url 'delete_message' message.id %}" class="text-right mt-2">
+                  {% csrf_token %}
+                  <button type="submit" class="text-red-300 hover:text-red-500 text-sm">🗑️</button>
+                </form>
               {% endif %}
             </div>
           </div>
-        </div>
+        {% endfor %}
 
       </div>
-      
-      <footer class="rounded-sm flex flex-col items-center justify-center gap-3 mt-5 sm:mt-8 md:mt-16 lg:mt-20 py-3 w-full border-t-2 border-gray-600 bg-neutral-900">
 
-        <h1 class="text-xl text-gray-400 font-semibold">Connect with Us</h1>
-        <div class="w-32 h-0.5 bg-gray-500"></div>
-      
-        <div class="flex gap-32">
-          <a href="https://www.instagram.com/sangam_0_0_jangid/"
-             class="text-gray-400 text-lg hover:text-pink-500 transition duration-300">
-            Instagram
-            <div class="w-20 h-0.5 bg-gray-500 mt-1"></div>
-          </a>
-      
-          <a href="tel:+919012203836"
-             class="text-gray-400 text-lg hover:text-green-400 transition duration-300">
-            Contact
-            <div class="w-16 h-0.5 bg-gray-500 mt-1"></div>
-          </a>
-        </div>
-      
-        <p class="text-gray-600 text-sm mt-1">© 2025 RoyalStore. All rights reserved.</p>
-      
-      </footer>
-      
-<script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.startsWith(name + "=")) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+      <!-- Input form at bottom -->
+      <form method="post" action="{% url 'send_message' %}" class="p-3 bg-black flex gap-2 border-t border-white/20">
+        {% csrf_token %}
+        <input name="message" placeholder="Type your message..."
+          class="flex-grow min-w-0 p-3 rounded-full bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
+          required />
+        <button type="submit"
+          class="px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:scale-105 transition shadow-lg">
+          Send
+        </button>
+      </form>
 
-const csrftoken = getCookie("csrftoken");
+    </div>
+    <!-- End of chat box -->
 
-function placeOrder() {
-  let addressManual = document.getElementById("userAddress").value.trim();
-let addressAuto = document.getElementById("locationDisplay").innerText.trim();
+  </div>
+  <!-- End of black container -->
 
-let address = addressManual || addressAuto;
-
-if (!address) {
-    alert("Please enter or fetch your delivery address");
-    return;
-}
-  fetch('/Shop/order/', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')
-      },
-      body: JSON.stringify({
-          address:address
-      })
-  })
-  .then(response => response.json())
-  .then(data => {
-      alert(data.message);
-      window.location.href = '/Shop/admin-orders/';
-  })
-  .catch(error => {
-      console.error("Error placing order:", error);
-  });
-}
-
-
-  function removeItem(itemId) {
-    fetch(`/Shop/remove_from_cart/${itemId}/`, {
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("✅ Item removed:", data.cart);
-      calculateTotal()
-      const row = document.getElementById(`cart-item-${itemId}`);
-      if (row) {
-        row.remove();
-      }
-    })
-    .catch(err => console.error("❌ Error removing item:", err));
-  }
-  
-
-  document.getElementById("addressForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    let address = document.getElementById("userAddress").value;
-    if (address == "") {
-      return 
-    }
-  });
-  
-  function getUserLocation() {
-    const locationDisplay = document.getElementById("locationDisplay");
-    const loader = document.getElementById("loader");
-  
-    loader.classList.remove("hidden");
-    locationDisplay.innerText = "";
-    locationDisplay.classList.add("hidden");
-    locationDisplay.classList.remove("bg-gradient-to-r");
-  
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          successCallback(position, loader, locationDisplay)
-          locationDisplay.classList.remove("hidden")
-          locationDisplay.classList.add("bg-gradient-to-r")
-        },
-        (error) => errorCallback(error, loader),
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      )
-    } else {
-      alert("Geolocation is not supported by your browser.")
-      loader.classList.add("hidden")
-    }
-  }
-  
-  
-  function successCallback(position) {
-    const lat = position.coords.latitude
-    const lng = position.coords.longitude
-  
-    const apiKey = "a95889e39e1949549f307df056965c7a"
-    const apiUrl = `https://api.opencagedata.com/geocode/v1/json?key=${apiKey}&q=${lat}+${lng}&pretty=1&no_annotations=1`
-  
-    fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        const loader = document.getElementById("loader");
-        if (data.results.length > 0) {
-          const locationInfo = data.results[0].components;
-          const city = locationInfo.city || locationInfo.town || locationInfo.village || "Unknown City";
-          const state = locationInfo.state || "Unknown State";
-          const country = locationInfo.country
-  
-          document.getElementById("locationDisplay").innerText = 
-            `📍 Location: ${city}, ${state}, ${country}`
-            loader.classList.add("hidden")
-            locationDisplay.classList.remove("hidden")
-        } else {
-          alert("Unable to fetch location details.")
-        }
-      })
-      .catch(error => {
-        console.error("Error fetching location data: ", error)
+  <script>
+    function scrollToBottom() {
+      const chatBox = document.getElementById('chat-box');
+      chatBox.scrollTo({
+        top: chatBox.scrollHeight,
+        behavior: 'smooth'
       });
     }
-    
-    function errorCallback(error) {
-      alert("Location access denied or unavailable.")
-    }
-    
-    
-    
-    function calculateTotal() {
-      fetch("/Shop/get_cart/")
-        .then(response => response.json())
-        .then(data => {
-          const cart = data.cart || {};
-          let total = 0;
-    
-          // calculate total cart value
-          Object.values(cart).forEach(item => {
-            total += item.price * item.quantity;
-          });
-    
-          const mrpElement = document.getElementById("mrp");
-          const totalElement = document.getElementById("total");
-          const input = document.querySelector("input[type=checkbox]");
-          const feeLabel = document.getElementById("feeLabel");
-          const paymentButton = document.getElementById("rzp-button");
-    
-          if (mrpElement) {
-            mrpElement.textContent = `₹${total}.00`;
-          }
-    
-          let finalTotal = total;
-  
-          if (input) {
-            if (input.checked) {
-              finalTotal += 5;
-              if (feeLabel) {
-                feeLabel.textContent = `+ ₹5.00`;
-                feeLabel.classList.remove("text-white", "opacity-50");
-                feeLabel.classList.add("text-green-500");
-              }
-              const labelText = document.querySelector(".label");
-              if (labelText) labelText.classList.add("hidden");
-            } else {
-              if (feeLabel) {
-                feeLabel.textContent = `₹5.00`;
-                feeLabel.classList.remove("text-green-500");
-                feeLabel.classList.add("text-white", "opacity-50");
-              }
-              const labelText = document.querySelector(".label");
-              if (labelText) labelText.classList.remove("hidden");
-            }
-          }
-    
-          if (totalElement) {
-            totalElement.textContent = `₹${finalTotal}.00`;
-          }
-    
-          if (paymentButton) {
-            paymentButton.onclick = function () {
-              let options = {
-                "key": "rzp_test_CrBqSmlkgftH1e",
-                "amount": finalTotal * 100,
-                "currency": "INR",
-                "name": "RoyalStore",
-                "description": "Cart Payment",
-                "theme": { "color": "#0f172a" },
-                "handler": function (response) {
-                  alert("✅ Payment Successful!\nTransaction ID: " + response.razorpay_payment_id)
-                  fetch("/Shop/clear_cart/")
-                    .then(() => {
-                      location.reload()
-                    })
-                }
-              }
-              let rzp = new Razorpay(options)
-              rzp.open()
-            }
-          }
-    
-        })
-        .catch(err => {
-          console.error("❌ Error calculating total", err)
-        })
-    }
-    
-
-function checkEmptyCart() {
-  fetch("/Shop/get_cart/")
-    .then(response => response.json())
-    .then(data => {
-      const cart = data.cart || {};
-
-      const emptyMessage = document.getElementById("empty-message");
-      const smallContainer = document.querySelector(".smallContainer");
-      const message = document.querySelector(".message");
-      const footer = document.querySelector("footer");
-
-      if (Object.keys(cart).length === 0) {
-        emptyMessage.classList.remove("hidden");
-        emptyMessage.classList.add("flex");
-        smallContainer.classList.add("hidden");
-        message.classList.add("hidden");
-        footer.classList.add("absolute");
-        footer.classList.add("bottom-0");
-        window.addEventListener("pageshow", function (event) {
-          if (event.persisted) {
-            location.reload()
-          }
-        });
-      } else {
-        emptyMessage.classList.add("hidden");
-        smallContainer.classList.remove("hidden");
-        message.classList.remove("hidden");
-        footer.classList.remove("absolute");
-        footer.classList.remove("bottom-0");
-      }
-    })
-    .catch(err => {
-      console.error("Error checking empty cart", err)
-    });
-}
- 
-window.onload = function() {
-  fetch("/Shop/get_cart/")
-   .then(response => response.json())
-   .then(data => {
-    const cart = data.cart || {};
-    const span = document.getElementById("items");
-
-    Object.entries(cart).forEach(([id, item]) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.id = `cart-item-${id}`;
-      itemDiv.className = "flex gap-5 sm:gap-5 md:gap-8 lg:gap-10 items-center p-2 sm:p-2 md:p-3 lg:p-4 border-b border-white";
-
-      itemDiv.innerHTML = `
-        <img src="${item.image}" alt="${item.name}" class="h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-xl border-2 border-gray-300" />
-        <div class="text-left justify-center place-items-center w-full space-y-1.5 sm:space-y-2 md:space-y-3 lg:space-y-3">
-          <p class="font-bold text-[10px] sm:text-sm md:text-base lg:text-lg text-white">${item.name}</p>
-          <p class="text-white text-[10px] sm:text-sm md:text-base lg:text-base">${item.quantity} × ₹${item.price} = ₹${item.price * item.quantity}.00</p>
-          <p class="text-white text-[10px] sm:text-sm md:text-base lg:text-base">Weight: ${item.weight}</p>
-          <hr class='border-gray-600 w-8/9 sm:w-8/9 md:w-8/9 lg:w-1/2'>
-          <button onclick="removeItem(${id})" class="remove-btn bg-red-600 text-white h-5 w-14 sm:h-5 sm:w-20 md:h-8 md:w-28 lg:h-10 lg:w-32 text-[12px] sm:text-sm md:text-base lg:text-lg rounded">Remove</button>
-        </div>
-      `;
-
-      // Attach remove button listener
-      itemDiv.querySelector(".remove-btn").addEventListener("click", (e) => {
-        const itemId = e.target.dataset.id;
-        removeItem(itemId);
-      });
-
-      // Add to the DOM
-      span.appendChild(itemDiv);
-    });
-  })
-}
-
-calculateTotal();
-checkEmptyCart();
-
-const checkbox = document.querySelector("input");
-
-checkbox.addEventListener("change", function () {
-  calculateTotal();
-});
-
-window.addEventListener("pageshow", function(event) {
-    if (event.persisted) {
-      window.location.reload();
-    }
-  });
-</script>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    window.onload = scrollToBottom;
+  </script>
 
 </body>
 </html>
-
-<!-- sR9spBH1mBqBX0bFUA4h4bod key secret -->
-<!-- rzp_test_CrBqSmlkgftH1e key id -->

@@ -25,7 +25,7 @@
     <form action="{% url 'logout' %}" method="post" class='flex'>
      <p class='text-xs sm:text-lg md:text-xl lg:text-2xl text-white'>Welcome, {{ user.username }}! </p>
      {% csrf_token %}
-     <button type="submit" class="text-white bg-red-600 px-0.5 py-0.5 sm:py-0.5 md:py-0.5 lg:py-1 sm:px-1 md:px-2 lg:px-3 rounded ml-3 text-xs sm:text-lg md:text-xl lg:text-xl">Logout</button>
+     <button type="submit" class="text-white bg-red-600 px-0.5 py-0.5 sm:py-0.5 md:py-0.5 lg:py-1 sm:px-1 md:px-2 lg:px-3 rounded ml-1.5 sm:ml-1.5 md:ml-2 lg:ml-3 text-xs sm:text-lg md:text-xl lg:text-xl">Logout</button>
     </form>
     {% else %}
      <a href="{% url 'login' %}" class='text-xs sm:text-lg md:text-xl lg:text-xl px-0.5 py-0.5 sm:py-0.5 md:py-0.5 lg:py-1 sm:px-1 md:px-2 lg:px-3 rounded-sm bg-gradient-to-r from bg-red-500 to-blue-700 text-white '>Login</a>
@@ -34,7 +34,7 @@
     </div>
 
     {% if user.is_superuser %}
-    <a href="{% url 'admin_orders' %}" class="block px-1.5 py-1 sm:px-2 sm:py-1 md:px-3 md:py-2 lg:px-3 lg:py-2 text-white text-center rounded-xl hover:text-blue-600 text-xs sm:text-sm md:text-base bg-gradient-to-r from-black to-white transition-all duration-200">
+    <a href="{% url 'admin_orders' %}" class="block px-1 py-1 sm:px-2 sm:py-1 md:px-3 md:py-2 lg:px-3 lg:py-2 text-white text-center rounded-xl hover:text-blue-600 text-[9px] sm:text-sm md:text-base bg-gradient-to-r from-black to-white transition-all duration-200">
       <b>Take Orders</b>
     </a>
     {% endif %}

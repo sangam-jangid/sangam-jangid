@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,10 +85,15 @@ WSGI_APPLICATION = 'RoyalStore.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'hHyQJychyUSVeuvigYyyWzigAhlCnzNL',
+        'HOST': 'trolley.proxy.rlwy.net',
+        'PORT': '34289',
     }
 }
+
 
 CHANNEL_LAYERS = {
     "default": {
@@ -146,4 +154,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 SESSION_COOKIE_AGE = 86400
 
-ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1']
+if os.getenv("RAILWAY_ENVIRONMENT") == "production":
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1']
