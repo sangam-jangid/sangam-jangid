@@ -13,18 +13,10 @@
   
   <body class="bg-[rgb(19,19,19)]">
 
-    <div id="popupMessage" class="fixed hidden flex-col justify-center place-items-center bottom-20 left-0 right-0 mx-auto bg-gradient-to-r from-purple-800 via-black to-purple-800 backdrop-blur-lg text-white h-16 w-40 sm:h-10 sm:w-40 md:h-20 md:w-80 lg:h-24 lg:w-96 rounded-2xl shadow-2xl ring-2 ring-purple-500/50 transition-all duration-500 z-50 text-sm sm:text-sm md:text-base lg:text-xl gap-2 animate-pulse">
-  
-      <p id="quantity" class="text-center text-white font-semibold tracking-wide text-sm sm:text-base md:text-lg lg:text-xl"></p>
-      
-      <a href="{% url 'cart' %}" 
-         id="cartBtn"
-         class="flex justify-center text-center place-items-center bg-gradient-to-r from-purple-400 to-blue-600 rounded-xl h-6 w-24 sm:h-6 sm:w-20 md:h-8 md:w-28 lg:h-10 lg:w-32 text-sml sm:text-sm md:text-xl lg:text-2xl font-bold shadow-md hover:scale-105 hover:shadow-xl transition-all duration-300">
-        Go to Cart
-      </a>
-    
-    </div>
-    
+  <div id="popupMessage" class="fixed hidden flex-col justify-center place-items-center bottom-20 left-0 right-0 mx-auto bg-black/30 backdrop-blur-sm text-white h-16 w-40 sm:h-10 sm:w-40 md:h-20 md:w-80 lg:h-24 lg:w-96 rounded-lg shadow-lg transition-all duration-500 z-50 text-sm sm:text-sm md:text-base lg:text-xl gap-2">
+    <p id="quantity"></p>
+    <a href="{% url 'cart' %}" id='cartBtn'class='flex justify-center text-center place-items-center bg-gradient-to-r from-white to-black rounded-xl h-6 w-24 sm:h-6 sm:w-20 md:h-8 md:w-28 lg:h-10 lg:w-32 text-sml sm:text-sm md:text-xl lg:text-2xl'>Go to Cart</a>
+  </div>
 
   <video autoplay muted loop playsinline class="fixed top-0 left-0 w-full h-full object-cover -z-10">
     <source src="{% static 'videos/bar.mp4' %}" type="video/mp4">
@@ -238,7 +230,6 @@
     }
   
   
-  // Increment button listener
   function incrementItem(itemId) {
     fetch("/Shop/update-cart/", {
       method: "POST",
@@ -255,7 +246,6 @@
   }
   
   
-  // Decrement button listener (no need to change this one)
   function decrementItem(itemId) {
     fetch("/Shop/update-cart/", {
       method: "POST",
@@ -370,12 +360,52 @@
     });
   }
 
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      location.reload();
-      alert("Please reload this page for latest session.");
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchAndSyncCartUI();
   });
+  
+  // New clean function:
+  function fetchAndSyncCartUI() {
+    fetch("/Shop/get_cart/", { cache: "no-store" })  // 👈 disables cache
+      .then(response => response.json())
+      .then(data => {
+        const cart = data.cart || {};
+  
+        // Update popup
+        const totalQuantity = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+        const popup = document.getElementById("popupMessage");
+        const quantityText = document.getElementById("quantity");
+  
+        if (totalQuantity > 0) {
+          popup.classList.remove("hidden");
+          popup.classList.add("flex");
+          quantityText.innerText = `Items in cart: ${totalQuantity}`;
+        } else {
+          popup.classList.add("hidden");
+          popup.classList.remove("flex");
+        }
+  
+        // Update individual product counters
+        document.querySelectorAll(".counterDiv1").forEach(counterDiv => {
+          const itemId = counterDiv.dataset.id;
+          const addBtn = document.getElementById(`addBtn-${itemId}`);
+          const quantityValue = document.getElementById(`counterValue-${itemId}`);
+  
+          if (cart[itemId]) {
+            counterDiv.classList.remove("hidden");
+            counterDiv.classList.add("flex");
+            if (addBtn) addBtn.classList.add("hidden");
+            if (quantityValue) quantityValue.innerText = cart[itemId].quantity;
+          } else {
+            counterDiv.classList.add("hidden");
+            counterDiv.classList.remove("flex");
+            if (addBtn) addBtn.classList.remove("hidden");
+          }
+        });
+  
+      })
+      .catch(err => console.error("❌ Error syncing cart UI", err));
+  }
   
   
   document.addEventListener("DOMContentLoaded", function () {

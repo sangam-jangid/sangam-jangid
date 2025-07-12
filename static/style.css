@@ -226,32 +226,14 @@ body .nav{
   }
 }
 
-#loader {
+.blinking {
   animation: blink 1s infinite;
+  font-family:;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
-}
-
-
-.body, .container_1 {
-  background: linear-gradient(270deg, red, yellow, cyan, black, lime, blue);
-  background-size: 500% 500%;
-  animation: gradientShift 15s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 

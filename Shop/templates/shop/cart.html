@@ -2,85 +2,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Royal Chat Room</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Document</title>
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
-  <style>
-    .fade-in {
-      animation: fadeIn 0.5s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'style.css'%}">
 </head>
-<body class="h-screen w-screen bg-black flex items-center justify-center">
-
-  <!-- Full black container -->
-  <div class="h-full w-full bg-black flex items-center justify-center">
-
-    <!-- Centered chat box -->
-    <div class="w-full max-w-xl h-[90vh] bg-black border border-white/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-
-      <!-- Messages scroll area -->
-      <div id="chat-box" class="flex-grow overflow-y-auto p-4 space-y-3">
-
-        {% for message in messages %}
-          <div class="fade-in">
-            <div class="p-4 rounded-2xl backdrop-blur-md transition
-            {% if message.sender == user %}
-              ml-auto bg-gradient-to-r from-purple-600 to-pink-500 text-white
-            {% else %}
-              bg-white/10 text-white
-            {% endif %} hover:scale-[1.015] duration-300 max-w-[75%]">
-
-              <div class="flex justify-between items-center mb-1">
-                <p class="text-sm font-semibold">{{ message.sender.username }}</p>
-                <p class="text-xs text-gray-300">{{ message.timestamp|date:"H:i" }}</p>
+<body class='body bg-black'>
+  <img src="{% static 'mm.jpg' %}" class='fixed top-0 left-0 w-full h-full object-cover -z-10' alt="">
+  <nav class='flex items-center md:justify-center lg:justify-center w-full fixed p-4 top-0 z-50 bg-black/30 backdrop-blur-xl'>
+    <ul class='gap-2 sm:gap-3 md:gap-4 lg:gap-5 flex place-items-center'>
+      <label class='text-white text-[8px] sm:text-base md:text-xl lg:text-2xl'>Enter Your Address</label>
+      <input type="text" id="manualAddress" class='border-2 border-white text-[11px] sm:text-sm md:text-lg lg:text-xl text-white h-5 w-24 sm:h-8 sm:w-28 md:h-9 md:w-36 lg:h-10 lg:w-40'>
+      <button id='getLocationBtn' class='h-7 w-16 sm:h-10 sm:w-20 md:h-10 md:w-28 lg:h-10 lg:w-32 text-white rounded-xl bg-gradient-to-r from-pink-500 to-blue-600 text-[10px] sm:text-sm md:text-lg lg:text-xl'>Get Location</button>
+      <a class='text-xs sm:text-sm md:text-base lg:text-lg px-0.5 py-0.5 sm:px-0.5 sm:py-0.5 md:px-1 md:py-1 lg:px-2 lg:py-2 text-white' href="{% url 'user_orders' request.user.username%}">📝My Orders</a>
+    </ul>
+  </nav>
+  <div class="container min-h-screen flex flex-col items-center w-full mt-20">
+    <div class="location flex flex-col justify-center place-items-center">
+      <div class="fetching hidden w-full text-sm sm:text-sm md:text-base lg:text-xl p-2 font-medium text-black text-center bg-gradient-to-br from-black via-green-500 to-white">Fetching Your Location...</div>
+      <div class="locationResult rounded-xl hidden w-full text-sm sm:text-sm md:text-base lg:text-xl p-2 font-medium text-black text-center bg-gradient-to-br from-blue-600 via-white to-purple-600"></div>
+    </div>
+    <span class="text-2xl sm:text-2xl md:text-3xl lg:text-4xl text-white text-center font-bold my-2 sm:my-3 md:my-4 lg:my-5">{{user.username}}'s Cart</span>
+     <div class="small_container px-4 py-4 rounded-xl flex flex-col gap-6 mt-5 sm:mt-5 md:mt-7 lg:mt-10 w-auto sm:w-3/4 md:w-4/5 lg:w-1/2">
+      {% if cart %}
+        {% for key, item in cart.items %}
+          <div class="cart-item-{{ key }} flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-black to-purple-500 border border-white/20 rounded-xl p-4 gap-4 shadow-lg">
+            
+            <div class="flex items-center gap-4 sm:gap-5 md:gap-7 lg:gap-10">
+              <img src="{{ item.image }}" alt="{{ item.name }}" class="h-20 w-20 sm:h-20 sm:w-20 md:h-20 md:w-20 lg:h-28 lg:w-28 rounded-lg" />
+              <div class="text-white flex flex-col gap-3">
+                <h2 class="name text-sm sm:text-sm md:text-base lg:text-lg font-bold">{{ item.name }}</h2>
+                <p class="weight text-[10px] sm:text-xs md:text-sm lg:text-sm font-bold">Weight: {{ item.weight }}</p>
+                <p class="price text-[10px] sm:text-xs md:text-sm lg:text-sm font-bold">₹{{ item.price }}</p>
               </div>
-
-              <p class="text-lg leading-relaxed break-words">{{ message.content }}</p>
-
-              {% if user.is_authenticated and message.sender == user or user.is_superuser %}
-                <form method="post" action="{% url 'delete_message' message.id %}" class="text-right mt-2">
-                  {% csrf_token %}
-                  <button type="submit" class="text-red-300 hover:text-red-500 text-sm">🗑️</button>
-                </form>
-              {% endif %}
+            </div>
+            <div class="flex gap-36 sm:gap-6 md:gap-8 lg:gap-10">
+              <div class="flex items-center gap-3">
+                <button onclick="updateCart('{{ key }}', 'decrement')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full h-6 w-6 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 flex items-center justify-center font-bold">-</button>
+                <p class="quantity text-white font-semibold text-lg">{{ item.quantity }}</p>
+                <button onclick="updateCart('{{ key }}', 'increment')" class="bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-full h-6 w-6 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 flex items-center justify-center font-bold">+</button>
+              </div>
+                <a href="#" onclick="removeFromCart('{{ key }}')" class="text-white px-2 py-1 bg-red-500 rounded-sm text-sm sm:text-base"> Remove</a>
             </div>
           </div>
         {% endfor %}
-
+  
+        
+        {% else %}
+        <p class="text-white text-center text-2xl py-8">Your cart is empty.</p>
+        {% endif %}
       </div>
 
-      <!-- Input form at bottom -->
-      <form method="post" action="{% url 'send_message' %}" class="p-3 bg-black flex gap-2 border-t border-white/20">
-        {% csrf_token %}
-        <input name="message" placeholder="Type your message..."
-          class="flex-grow min-w-0 p-3 rounded-full bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
-          required />
-        <button type="submit"
-          class="px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:scale-105 transition shadow-lg">
-          Send
-        </button>
-      </form>
+      <div class="total h-[30vh] w-[80vw] sm:h-[40vh] sm:w-[40vw] md:h-[35vh] md:w-[60vw] lg:h-[50vh] lg:w-[35vw] bg-gradient-to-r from-gray-700 via-white to-gray-700 mb-20 mt-10 rounded-xl flex flex-col items-center">
 
+        <div class="header text-center mt-3">
+          <span class="text-sm sm:text-base md:text-lg lg:text-xl text-black font-bold">Payment Details</span>
+        </div>
+
+        <div class="details mt-5 sm:mt-6 md:mt-8 lg:mt-10 flex flex-col space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-7 w-full">
+        <div class="mrp flex justify-between px-9">
+          <span class="text-base sm:text-lg md:text-xl lg:text-2xl text-black font-bold">MRP</span>
+          <span id="mrp" class="text-xs sm:text-sm md:text-lg lg:text-xl text-black font-bold"></span>
+        </div>
+          <hr class="w-[250px] sm:w-[300px] md:w-[400px] lg:w-[500px] mx-auto">
+        <div class="delivery flex justify-between px-9">
+          <span class="text-base sm:text-lg md:text-xl lg:text-2xl text-black font-bold">Delivery</span>
+          <label for="input" class="text-[9px] sm:text-sm md:text-base lg:text-base text-black font-bold">Wanna Delivery? <input type="checkbox" id="delivery" onchange="updateTotal()"><span class="text-sm sm:text-sm md:text-lg lg:text-xl text-black">+₹5</span></label>
+        </div>
+        <hr class="w-[250px] sm:w-[300px] md:w-[400px] lg:w-[500px] mx-auto">
+        <div class="Total flex justify-between px-9">
+          <span class="text-base sm:text-lg md:text-xl lg:text-2xl text-black font-bold">Total</span>
+          <span id="final" class="text-base sm:text-lg md:text-xl lg:text-2xl text-black font-bold"></span>
+        </div>
+      </div>
+      <button onclick="placeOrder()" class="mt-5 sm:mt-6 md:mt-6 lg:mt-6 py-1 text-white text-sm sm:text-sm md:text-lg lg:text-xl bg-black h-7 w-20 sm:h-8 sm:w-20 md:h-9 md:w-24 lg:h-10 lg:w-32 text-center">Order Now</button>
+      </div>
     </div>
-    <!-- End of chat box -->
 
-  </div>
-  <!-- End of black container -->
+  
+    <footer class="rounded-sm flex flex-col items-center justify-center gap-3 mt-5 sm:mt-8 md:mt-16 lg:mt-20 py-3 w-full border-t-2 border-gray-600 bg-neutral-900">
+
+      <h1 class="text-xl text-gray-400 font-semibold">Connect with Us</h1>
+      <div class="w-32 h-0.5 bg-gray-500"></div>
+    
+      <div class="flex gap-32">
+        <a href="https://www.instagram.com/sangam_0_0_jangid/"
+           class="text-gray-400 text-lg hover:text-pink-500 transition duration-300">
+          Instagram
+          <div class="w-20 h-0.5 bg-gray-500 mt-1"></div>
+        </a>
+    
+        <a href="tel:+919012203836"
+           class="text-gray-400 text-lg hover:text-green-400 transition duration-300">
+          Contact
+          <div class="w-16 h-0.5 bg-gray-500 mt-1"></div>
+        </a>
+      </div>
+    
+      <p class="text-gray-600 text-sm mt-1">© 2025 RoyalStore. All rights reserved.</p>
+    
+    </footer>
 
   <script>
-    function scrollToBottom() {
-      const chatBox = document.getElementById('chat-box');
-      chatBox.scrollTo({
-        top: chatBox.scrollHeight,
-        behavior: 'smooth'
-      });
+    const getLocationBtn = document.querySelector('#getLocationBtn');
+    const fetching = document.querySelector('.fetching');
+    const locationResult = document.querySelector('.locationResult');
+  
+    getLocationBtn.addEventListener('click', () => {
+      fetching.classList.add('blinking');
+      fetching.classList.remove('hidden');
+      locationResult.classList.add('hidden');
+  
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        stopBlinking();
+        locationResult.innerText = "Geolocation is not supported by this browser.";
+      }
+    });
+  
+    function showPosition(position) {
+  stopBlinking();
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  const accuracy = position.coords.accuracy;
+
+  let accuracyNote = "";
+  if (accuracy > 500) {
+    accuracyNote = "⚠️ Location accuracy is low — results may not be exact.";
+  }
+
+  fetch(`https://api.opencagedata.com/geocode/v1/json?key=a95889e39e1949549f307df056965c7a&q=${latitude},${longitude}&pretty=1&no_annotations=1`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.results.length > 0) {
+        const location = data.results[0].formatted;
+        locationResult.innerHTML = `📍 Your Location: ${location}<br><span class="text-sm">${accuracyNote}</span>`;
+      } else {
+        locationResult.innerText = "Could not fetch address.";
+      }
+    })
+    .catch(error => {
+      locationResult.innerText = "Error fetching location.";
+      console.error(error);
+    });
+}
+
+
+function showError(error) {
+    stopBlinking();
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        locationResult.innerText = "User denied the request for Geolocation.";
+        break;
+      case error.POSITION_UNAVAILABLE:
+        locationResult.innerText = "Location information is unavailable.";
+        break;
+      case error.TIMEOUT:
+        locationResult.innerText = "The request to get user location timed out.";
+        break;
+      case error.UNKNOWN_ERROR:
+        locationResult.innerText = "An unknown error occurred.";
+        break;
     }
-    window.onload = scrollToBottom;
-  </script>
+  }
+  
+    function stopBlinking() {
+      locationResult.classList.remove('blinking');
+      locationResult.classList.remove('hidden');
+      fetching.classList.add('hidden');
+    }
+
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+function fetchWithCSRF(url, options = {}) {
+  options.headers = options.headers || {};
+  if (!options.method || options.method !== 'GET') {
+    options.headers['X-CSRFToken'] = getCSRFToken();
+  }
+  return fetch(url, options);
+}
+
+function updateCart(id, action) {
+  fetchWithCSRF("/Shop/update-cart/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, action })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Failed to update cart.");
+    return response.json();
+  })
+  .then(data => {
+    console.log("✅ Cart updated", data);
+    location.reload(); 
+  })
+  .catch(err => console.error("Error updating cart", err));
+}
+
+
+function removeFromCart(id) {
+  fetch(`/Shop/remove_from_cart/${id}/`, {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'removed') {
+      location.reload();
+    } else {
+      console.error("Failed to remove item");
+    }
+  })
+  .catch(err => console.error("Error removing item", err));
+}
+
+
+
+function updateTotal() {
+  const delivery = document.getElementById("delivery").checked;
+  const mrp = document.getElementById("mrp");
+  const final = document.getElementById("final");
+  let total = 0;
+
+  document.querySelectorAll(".small_container > div").forEach(itemCard => {
+    const priceText = itemCard.querySelector(".price");
+    const quantityText = itemCard.querySelector(".quantity");
+
+    if (priceText && quantityText) {
+      const price = parseFloat(priceText.innerText.replace("₹", ""));
+      const quantity = parseInt(quantityText.innerText);
+      total += price * quantity;
+    }
+  });
+
+  mrp.innerText = `₹${total}`;
+  let finalTotal = total;
+  if (delivery) {
+    finalTotal += 5;
+  }
+  final.innerText = `₹${finalTotal}`;
+}
+
+function placeOrder() {
+  const address = document.querySelector('input[type="text"]').value;
+  if (!address) {
+    alert("Please enter your address before placing the order.");
+    return;
+  }
+
+  fetch("/Shop/order/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    body: JSON.stringify({ address })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert(data.message);
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+    }
+  })
+  .catch(error => console.error("Error placing order:", error));
+}
+
+
+
+document.getElementById("delivery").addEventListener("change", updateTotal);
+
+document.addEventListener("DOMContentLoaded", updateTotal);
+
+</script>
 
 </body>
 </html>

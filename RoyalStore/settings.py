@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-56!bb-9&q2ieo0vse0xdb$3u_7or#v5+pgd&(+4z-^e_p*&eep'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 # Application definition
@@ -91,6 +91,7 @@ DATABASES = {
         'PASSWORD': 'hHyQJychyUSVeuvigYyyWzigAhlCnzNL',
         'HOST': 'trolley.proxy.rlwy.net',
         'PORT': '34289',
+        'CONN_MAX_AGE': 60,
     }
 }
 
@@ -156,4 +157,9 @@ SESSION_COOKIE_AGE = 86400
 
 if os.getenv("RAILWAY_ENVIRONMENT") == "production":
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1']
+    ALLOWED_HOSTS = ['.up.railway.app','*']
+
+ALLOWED_HOSTS = ['.up.railway.app','*']
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
