@@ -170,4 +170,13 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 DEBUG = False
-ALLOWED_HOSTS = ['.up.railway.app','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['.up.railway.app']
+
+# ... your other settings ...
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE   = True
+    CSRF_COOKIE_SECURE      = True
+    CSRF_TRUSTED_ORIGINS    = ["https://<your-service>.up.railway.app"]
+
