@@ -70,11 +70,8 @@
           <div class="item flex flex-col items-center h-[33vh] sm:h-[33vh] md:h-[35vh] lg:h-[60vh] w-full rounded-xl backdrop-blur-[3px] bg-black/30">
     
             <div class="image flex justify-center place-items-center h-32 w-32 mt-6 border-2 border-white bg-white sm:h-36 sm:w-36 md:h-52 md:w-52 lg:h-64 lg:w-64">
-              {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-              {% else %}
-                <img src="{% static 'tedhe.webp'%}" alt="No image">
-              {% endif %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                class="h-28 w-28 rounded-xl sm:rounded-xl md:rounded-2xl lg:rounded-3xl border-2 border-white sm:h-32 sm:w-32 md:h-48 md:w-48 lg:h-60 lg:w-60">
             </div>
     
             <div class="info flex flex-col h-[10vh] w-[31vw] sm:w-[10vh] md:w-[25vw] lg:w-[18vw] sm:h-[7vh] md:h-[14vh] lg:h-[18vh] mt-0.5">
