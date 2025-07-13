@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -9,7 +10,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     weight = models.CharField(max_length=20,  blank=True, null=True)
-    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
+    image = models.ImageField(upload_to='product_images/',storage=MediaCloudinaryStorage(),  null=True, blank=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='snack')
 
     def __str__(self):

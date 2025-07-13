@@ -18,6 +18,7 @@ import cloudinary
 
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,10 +28,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-56!bb-9&q2ieo0vse0xdb$3u_7or#v5+pgd&(+4z-^e_p*&eep'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
 
 # Application definition
 
@@ -159,11 +156,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 SESSION_COOKIE_AGE = 86400
 
-if os.getenv("RAILWAY_ENVIRONMENT") == "production":
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    ALLOWED_HOSTS = ['.up.railway.app','*']
-
-ALLOWED_HOSTS = ['.up.railway.app','*']
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -175,3 +167,7 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+DEBUG = True
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
