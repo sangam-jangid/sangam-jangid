@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary
+
 
 
 
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     'tailwind',
     'THEME',
     'channels',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 TAILWIND_APP_NAME = 'THEME'
@@ -163,3 +167,11 @@ ALLOWED_HOSTS = ['.up.railway.app','*']
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dwyqne6zj',
+    'API_KEY': '232733727778169',
+    'API_SECRET': 'bU6_V9k0sHjJF8l_vDHj8ehaByw',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
